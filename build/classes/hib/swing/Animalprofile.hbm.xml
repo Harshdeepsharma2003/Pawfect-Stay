@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate-Mapping DTD 3.0//EN"
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+ 
+ <hibernate-mapping package="hib.swing">
+    <class name="Animalprofile" table="Animalprofile">
+        <id name="contact" column="contact"/>
+        <property name="petName" />
+        <property name="breed" />
+        <property name="gender" />
+        <property name="age" />
+        <property name="diseasesAllergy" />
+        <property name="vaccination" />
+        <property name="temperament" />
+       <property name="food" />
+       <property name="height" />
+        <property name="weight" />
+        <property name="photo" />
+        
+               
+ </class> 
+</hibernate-mapping>
