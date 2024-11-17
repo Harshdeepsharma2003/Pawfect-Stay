@@ -1,5 +1,5 @@
 
-#Dog's2ndhome
+#Pawfect Stay
 
 A desktop-based application designed to facilitate temporary dog stay bookings, provide a list of available shelter places, and manage dog profiles. The application aims to connect dog owners with trusted and reliable shelter providers, ensuring a comfortable and safe stay for their pets while they are away.
 
