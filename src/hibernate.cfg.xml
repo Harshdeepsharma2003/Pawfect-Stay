@@ -6,16 +6,15 @@
 <session-factory>
 <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/test</property>
+<property name="hibernate.connection.url">jdbc:mysql://localhost:3307/projects</property>
 <property name="hibernate.connection.username">root</property>
-<property name="hibernate.connection.password">Harshdeep14</property>
+<property name="hibernate.connection.password">root</property>
 <property name="hibernate.hbm2ddl.auto">update</property>
 <mapping resource="hib/swing/Customer.hbm.xml"/>
-<mapping resource="hib/swing/bookstay.hbm.xml"/>
-<mapping resource="hib/swing/shelterplaces.hbm.xml"/>
 <mapping resource="hib/swing/Animalprofile.hbm.xml"/>
-<mapping resource="hib/swing/feedbacks.hbm.xml"/>
+<mapping resource="hib/swing/bookstay.hbm.xml"/>
 <mapping resource="hib/swing/shelterowner.hbm.xml"/>
+<mapping resource="hib/swing/shelterplaces.hbm.xml"/>
 
 </session-factory>
 </hibernate-configuration>

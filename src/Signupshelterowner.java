@@ -246,9 +246,9 @@ public class Signupshelterowner extends javax.swing.JFrame {
         tx.commit();
         session.close();
         JOptionPane.showMessageDialog(this,"Done");
-       
-dispose();
-        // TODO add your handling code here:
+        dispose();
+        new Homeshelter().setVisible(true);         
+// TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**

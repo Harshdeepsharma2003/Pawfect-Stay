@@ -19,6 +19,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
+import java.util.Date;
+import org.jdatepicker.JDatePicker;
+import org.jdatepicker.UtilDateModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -36,94 +39,111 @@ public class CheckStayStatus extends javax.swing.JFrame {
      */
     public CheckStayStatus() {
         initComponents();
-         Fetch();    
+         String id = jTextField3.getText(); // Assuming this field contains the ID
+    loadExistingValues(id); 
+     Fetch();
     }
-
-   
-    private void Fetch(){
-   
-          DefaultTableModel dtmBookstay;
-    DefaultTableModel dtmAnimalProfile;
+  
+  
+   // This method should be called when the form is initialized or loaded
+private void loadExistingValues(String id) {
     
+    SessionFactory sf = new Configuration().configure().buildSessionFactory();
+Session session = sf.openSession();
+Transaction tx = session.beginTransaction();
+
+    
+// Retrieve the existing Bookstay object from the session
+Bookstay c = (Bookstay) session.get(Bookstay.class, id); // replace id with the actual ID
+
+// Check if the object is not null to avoid NullPointerException
+if (c != null) {
+    // Populate UI components with existing values
+    jTextField8.setText(c.getName());
+    jTextField2.setText(c.getContact());
+    jTextArea1.setText(c.getAddress());
+
+  if (c.getStartDate() != null) {
+    Calendar startCalendar = c.getStartDate(); // Assuming this returns a Calendar
+    Date startDate = startCalendar.getTime(); // Convert Calendar to Date
+    System.out.println("Start Date (Date): " + startDate);
+    
+    // Cast the model to UtilDateModel and set the value
+    ((UtilDateModel) jDatePicker1.getModel()).setValue(startDate); 
+} else {
+    System.out.println("Start Date is null");
+    ((UtilDateModel) jDatePicker1.getModel()).setValue(null); // Handle null case
+}
+
+if (c.getEndDate() != null) {
+    Calendar endCalendar = c.getEndDate(); // Assuming this returns a Calendar
+    Date endDate = endCalendar.getTime(); // Convert Calendar to Date
+    System.out.println("End Date (Date): " + endDate);
+    
+    // Cast the model to UtilDateModel and set the value
+    ((UtilDateModel) jDatePicker2.getModel()).setValue(endDate); 
+} else {
+    System.out.println("End Date is null");
+    ((UtilDateModel) jDatePicker2.getModel()).setValue(null); // Handle null case
+}
+
+
+
+    
+    jComboBox4.setSelectedItem(c.getStatus());
+    
+    
+    
+} else {
+    // Handle case where the Bookstay object does not exist
+    System.out.println("No Bookstay found with the given ID.");
+}  
+
+}
+
+ private void Fetch(){
+   
+         DefaultTableModel dtm;
    SessionFactory sf=new Configuration().configure().buildSessionFactory();
 
         org.hibernate.classic.Session session=sf.openSession();
         Transaction tx=session.beginTransaction();
-  
-   Criteria crit = session.createCriteria(Bookstay.class, "bs");
-crit.createCriteria("bs.animalProfile", "ap"); // join on animalProfile field
-crit.add(Restrictions.eqProperty("ap.contact", "bs.contact")); // join condition
-List<Object[]> list = crit.list();
-  
-   dtmBookstay = (DefaultTableModel) jTable4.getModel();
-  
-dtmAnimalProfile = (DefaultTableModel) jTable2.getModel(); //  jTable2 is the table for AnimalProfile
- 
-for (Object[] ref : list) {
-    Bookstay bookstay = (Bookstay) ref[0];
-    Object obj = ref[1];
-    if (obj instanceof AnimalProfile) {
-    try{
-        AnimalProfile animalProfile = (AnimalProfile) obj;
-        
-        if (bookstay != null && animalProfile != null) {
-            // populate jTable4 with Bookstay data
-            String id = bookstay.getId() != null ? bookstay.getId() : "";
-            String name = bookstay.getName() != null ? bookstay.getName() : "";
-            String contact = bookstay.getContact() != null ? bookstay.getContact() : "";
-            String address = bookstay.getAddress() != null ? bookstay.getAddress() : "";
-            Calendar startDate = bookstay.getStartDate() != null ? bookstay.getStartDate() : null; 
-            Calendar endDate = bookstay.getEndDate() != null ? bookstay.getEndDate() : null; 
-            String status = bookstay.getStatus() != null ? bookstay.getStatus() : "";
-            
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String startDateStr = startDate != null ? dateFormat.format(startDate.getTime()) : "";
-            String endDateStr = endDate != null ? dateFormat.format(endDate.getTime()) : "";
 
-            Object records[] = {id, name, contact, address, startDateStr, endDateStr, status};
-            dtmBookstay.addRow(records);   
-       
-            
-            String petName = animalProfile.getPetName() != null ? animalProfile.getPetName() : "";
-            String breed = animalProfile.getBreed() != null ? animalProfile.getBreed() : "";
-            String gender = animalProfile.getGender() != null ? animalProfile.getGender() : "";
-            String age = animalProfile.getAge() != null ? animalProfile.getAge() : "";
-            String diseasesAllergy = animalProfile.getDiseasesAllergy() != null ? animalProfile.getDiseasesAllergy() : "";
-            String vaccination = animalProfile.getVaccination() != null ? animalProfile.getVaccination() : "";
-            String temperament = animalProfile.getTemperament() != null ? animalProfile.getTemperament() : "";
-            String food = animalProfile.getFood() != null ? animalProfile.getFood() : "";
-            String height = animalProfile.getHeight() != null ? animalProfile.getHeight() : "";
-            String weight = animalProfile.getWeight() != null ? animalProfile.getWeight() : "";
-            File filePath = animalProfile.getPhoto() != null ? (File) animalProfile.getPhoto() : new File("");
-            Object animalRecords[] = {contact, petName, breed, gender, age, diseasesAllergy, vaccination, temperament, food, height, weight, filePath};
-            dtmAnimalProfile.addRow(animalRecords);
-        }
+        Criteria crit=session.createCriteria(Bookstay.class);
+        List<Bookstay> list=crit.list();
+        
+         dtm=(DefaultTableModel)jTable4.getModel();
+       for (Bookstay ref : list) {
+    if (ref != null) {
+        
+         String id = ref.getId() != null ? ref.getId() : "";
+String name = ref.getName() != null ? ref.getName() : "";
+        String contact = ref.getContact() != null ? ref.getContact() : "";
+        String address = ref.getAddress() != null ? ref.getAddress() : "";
+      Calendar startDate = ref.getStartDate() != null ? ref.getStartDate() : null;
+      Calendar endDate = ref.getEndDate() != null ? ref.getEndDate() : null;
+        String status=ref.getStatus() != null ? ref.getStatus() : "";
+        
+        Object records[] = {id,name, contact, address,startDate,endDate,status};
+        dtm.addRow(records);
     }
-     catch (NullPointerException e) {
-    System.out.println("Error: animalProfile is null");
-} catch (Exception e) {
-    System.out.println("Error: " + e.getMessage());
 }
-}
-}
-    }
+ }
+
+   
+   
     
   @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel3 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable4 = new javax.swing.JTable();
         jTextField5 = new javax.swing.JTextField();
-        jComboBox5 = new javax.swing.JComboBox<>();
         jButton3 = new javax.swing.JButton();
+        jLabel25 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
@@ -143,86 +163,18 @@ for (Object[] ref : list) {
         jTextField8 = new javax.swing.JTextField();
         jLabel27 = new javax.swing.JLabel();
         jComboBox4 = new javax.swing.JComboBox<>();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
-        jLabel35 = new javax.swing.JLabel();
-        jTextField11 = new javax.swing.JTextField();
-        jLabel36 = new javax.swing.JLabel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTextArea4 = new javax.swing.JTextArea();
-        jButton10 = new javax.swing.JButton();
-        jLabel37 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jLabel11 = new javax.swing.JLabel();
-        jButton11 = new javax.swing.JButton();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
-        jLabel25 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jButton12 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel38 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jLabel26 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox<>();
-        jTextField6 = new javax.swing.JTextField();
-        jLabel28 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setText("Home");
-        jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel3MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel3MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel3MouseExited(evt);
-            }
-        });
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
 
         jTabbedPane1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton1.setText("Delete Animal Profile");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 480, -1, -1));
-
-        jButton2.setText("Filter Animal Profile");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 480, -1, -1));
-
-        jTable2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Contact", "Pet Name", "Breed", "Gender", "Age", "Diseases & Allergies", "Vaccination", "Temperament", "Food Preferences", "Height", "Weight", "Photo"
-            }
-        ));
-        jScrollPane3.setViewportView(jTable2);
-
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, 1230, 160));
-
+        jTable4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -233,25 +185,26 @@ for (Object[] ref : list) {
         ));
         jScrollPane4.setViewportView(jTable4);
 
-        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 180));
+        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 1180, 240));
 
         jTextField5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField5ActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 200, 210, -1));
+        jPanel1.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 19, 210, 30));
 
-        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Show Record", "Delete Entry" }));
-        jPanel1.add(jComboBox5, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 200, 150, -1));
-
-        jButton3.setText("Submit");
+        jButton3.setText("Show");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 200, -1, -1));
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 20, -1, -1));
+
+        jLabel25.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel25.setText("ID");
+        jPanel1.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 20, -1, -1));
 
         jTabbedPane1.addTab("View", jPanel1);
 
@@ -414,291 +367,27 @@ for (Object[] ref : list) {
 
         jTabbedPane1.addTab("Update Shelter Stay", jPanel2);
 
-        jPanel4.setPreferredSize(new java.awt.Dimension(992, 1000));
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 70, 1200, 600));
 
-        jPanel6.setBackground(new java.awt.Color(51, 51, 51));
-        jPanel6.setPreferredSize(new java.awt.Dimension(1000, 720));
-
-        jLabel35.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel35.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel35.setText("Dog Age");
-
-        jTextField11.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jTextField11.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField11ActionPerformed(evt);
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/h1.png"))); // NOI18N
+        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
             }
-        });
-
-        jLabel36.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel36.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel36.setText("Diseases & Allergies");
-
-        jTextArea4.setColumns(20);
-        jTextArea4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jTextArea4.setRows(5);
-        jScrollPane6.setViewportView(jTextArea4);
-
-        jButton10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jButton10.setText("CLEAR");
-        jButton10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton10MouseEntered(evt);
+                jLabel4MouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton10MouseExited(evt);
+                jLabel4MouseExited(evt);
             }
         });
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
-            }
-        });
-
-        jLabel37.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel37.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel37.setText("Weight");
-
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel10.setText("Food Preferences(if any)");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Yes", "No" }));
-
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel11.setText("Dog's Vaccination");
-
-        jButton11.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jButton11.setText("  SUBMIT  ");
-        jButton11.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton11MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jButton11MouseExited(evt);
-            }
-        });
-        jButton11.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton11ActionPerformed(evt);
-            }
-        });
-
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane7.setViewportView(jTextArea2);
-
-        jLabel25.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel25.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel25.setText("ID");
-
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
-            }
-        });
-
-        jButton12.setText("Upload");
-        jButton12.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton12ActionPerformed(evt);
-            }
-        });
-
-        jLabel38.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel38.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel38.setText("Gender");
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Male", "Female" }));
-
-        jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel26.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel26.setText("Temperament");
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sporting Dog (Energetic and Playful)", "Herding Dog (Intelligent and Focused)", "Working Dog (Confident and Assertive)", "Terrier Dog (Feisty and Adventurous)", "Toy Dog (Playful and Affectionate)", "Hound Dog (Independent and Persistent)", " " }));
-
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
-            }
-        });
-
-        jLabel28.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel28.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel28.setText("Height");
-
-        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel35, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(34, 34, 34)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(90, 90, 90)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(119, 119, 119)
-                                .addComponent(jButton12)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(66, 66, 66)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(17, 17, 17))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel38, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jTextField7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(435, 435, 435))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(127, 127, 127)
-                                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(122, 122, 122)
-                                .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(jPanel6Layout.createSequentialGroup()
-                                        .addComponent(jButton11)
-                                        .addGap(63, 63, 63)
-                                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
-                                            .addComponent(jLabel10)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jPanel6Layout.createSequentialGroup()
-                                            .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
-                                            .addComponent(jLabel36, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(87, 87, 87)
-                                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addGap(26, 26, 26)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(jButton12)
-                        .addGap(57, 57, 57)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(50, 50, 50)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel35, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(53, 53, 53)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(72, 72, 72)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel36, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(46, 46, 46)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(25, 25, 25)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addGap(299, 299, 299))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(73, 73, 73)
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jButton11)
-                                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(112, 112, 112))))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(41, 41, 41)
-                        .addComponent(jLabel38, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(48, 48, 48)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(351, 351, 351))))
-        );
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 980, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 258, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 974, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 13, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Update Animal Profile", jPanel4);
-
-        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 50, 1240, 1030));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(-20, -40, -1, -1));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-new Publichome().setVisible(true);
-    }//GEN-LAST:event_jLabel3MouseClicked
-
-    private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseEntered
-
-    }//GEN-LAST:event_jLabel3MouseEntered
-
-    private void jLabel3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseExited
-        //        jLabel3.setForeground(c);
-    }//GEN-LAST:event_jLabel3MouseExited
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
@@ -725,157 +414,131 @@ new Publichome().setVisible(true);
     }//GEN-LAST:event_jButton6MouseExited
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-
+/*
 SessionFactory sf = new Configuration().configure().buildSessionFactory();
 Session session = sf.openSession();
 Transaction tx = session.beginTransaction();
 
-String id=jTextField3.getText();
+// Retrieve user inputs
+String id = jTextField3.getText();
 String name = jTextField8.getText();
 String contact = jTextField2.getText();
 String address = jTextArea1.getText();
- Calendar startDate = (Calendar) jDatePicker1.getModel().getValue(); 
-      Calendar endDate = (Calendar) jDatePicker2.getModel().getValue();
-String status=(String)jComboBox4.getSelectedItem();
-     
-// Assuming you have a Customer object with an ID, retrieve it from the session
- Bookstay  c = ( Bookstay ) session.get( Bookstay.class,id); // replace customerId with the actual ID
+Calendar startDate = (Calendar) jDatePicker1.getModel().getValue(); 
+Calendar endDate = (Calendar) jDatePicker2.getModel().getValue();
+String status = (String) jComboBox4.getSelectedItem();
 
-// Update the customer object with the new values
-c.setName(name);
-c.setContact(contact);
-c.setAddress(address);
-c.setStartDate(startDate);
-c.setEndDate(endDate);
-c.setStatus(status);
+// Retrieve the existing Bookstay object from the session
+Bookstay c = (Bookstay) session.get(Bookstay.class, id); // replace id with the actual ID
+
+// Check and update fields if they have changed
+if (!c.getName().equals(name)) {
+    c.setName(name);
+}
+if (!c.getContact().equals(contact)) {
+    c.setContact(contact);
+}
+if (!c.getAddress().equals(address)) {
+    c.setAddress(address);
+}
+if (!c.getStartDate().equals(startDate)) {
+    c.setStartDate(startDate);
+}
+if (!c.getEndDate().equals(endDate)) {
+    c.setEndDate(endDate);
+}
+if (!c.getStatus().equals(status)) {
+    c.setStatus(status);
+}
 
 // Update the customer object in the database
 session.update(c);
 
+// Commit the transaction and close the session
 tx.commit();
 session.close();
+
+
 JOptionPane.showMessageDialog(this, "Updated successfully");
-        
+        */
     }//GEN-LAST:event_jButton6ActionPerformed
 
-    private void jTextField11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField11ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField11ActionPerformed
-
-    private void jButton10MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton10MouseEntered
-
-    }//GEN-LAST:event_jButton10MouseEntered
-
-    private void jButton10MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton10MouseExited
-
-    }//GEN-LAST:event_jButton10MouseExited
-
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-
-    }//GEN-LAST:event_jButton10ActionPerformed
-
-    private void jButton11MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton11MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton11MouseEntered
-
-    private void jButton11MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton11MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton11MouseExited
-
-    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-
-        SessionFactory sf=new Configuration().configure().buildSessionFactory();
-
-        Session session=sf.openSession();
-        Transaction tx=session.beginTransaction();
-
-        String id=jTextField4.getText();
-      String age=jTextField2.getText();
-        String diseasesAllergy=jTextArea1.getText();
-        String vaccination=(String)jComboBox1.getSelectedItem();
-        String temperament=(String)jComboBox3.getSelectedItem();
-        String food=jTextArea2.getText();
-         String height=jTextField6.getText();
-        String weight=jTextField7.getText();
-        String filePath = jTextField1.getText();
-        File photo = new File(filePath);
-
-       // Retrieve the existing animal profile from the database
-Animalprofile c = (Animalprofile) session.get(Animalprofile.class, id);
-
-// Update the fields
-
-c.setAge(jTextField2.getText());
-c.setDiseasesAllergy(jTextArea1.getText());
-c.setVaccination((String) jComboBox1.getSelectedItem());
-c.setTemperament((String) jComboBox3.getSelectedItem());
-c.setFood(jTextArea2.getText());
-c.setHeight(jTextField6.getText());
-c.setWeight(jTextField7.getText());
-
-// Update the photo if a new file path is provided
-if (!jTextField1.getText().isEmpty()) {
-    File photo1 = new File(jTextField1.getText());
-    c.setPhoto(photo1);
-}
-
-// Save the updated profile
-session.update(c);
-tx.commit();
-session.close();
-
-JOptionPane.showMessageDialog(this, "Updated");
-
-
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton11ActionPerformed
-
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
-
-    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
-        JFileChooser chooser=new JFileChooser();
-        chooser.showOpenDialog(null);
-        File f=chooser.getSelectedFile();
-        jLabel1.setIcon(new ImageIcon(f.toString()));
-        String filename = f.getAbsolutePath();
-        jTextField1.setText(filename);
-
-        try{
-            File image=new File(filename);
-            FileInputStream fis=new FileInputStream(image);
-            ByteArrayOutputStream bos=new ByteArrayOutputStream();
-            byte[] buf=new byte[1024];
-            for(int readNum; (readNum=fis.read(buf))!=1;){
-                bos.write(buf,0,readNum);
-            }
-            photo=bos.toByteArray();
-        }
-        catch(Exception e){
-            JOptionPane.showMessageDialog(null,e);
-
-        }
-
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton12ActionPerformed
-
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
-
     private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
-
-
-
-
-
 
     }//GEN-LAST:event_jTextField5ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+             
+    String inputId = jTextField5.getText(); // Assuming jTextFieldId is your input field for ID
+    if (inputId.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Please enter an ID.", "Input Error", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    DefaultTableModel dtm;
+    
+     // Query the database
+    SessionFactory sf = new Configuration().configure().buildSessionFactory();
+    org.hibernate.classic.Session session = sf.openSession();
+    Transaction tx = session.beginTransaction();
+
+    try {
+        // Use Criteria to find the record by ID
+        Criteria crit = session.createCriteria(Bookstay.class);
+        crit.add(Restrictions.eq("id", inputId)); // Assuming 'id' is the field name in Bookstay
+        List<Bookstay> list = crit.list();
+dtm=(DefaultTableModel)jTable4.getModel();
+dtm.setRowCount(0); // Clear previous rows from the table model
+
+        // Populate the table model with the results
+        for (Bookstay ref : list) {
+            if (ref != null) {
+                String id = ref.getId() != null ? ref.getId() : "";
+                String name = ref.getName() != null ? ref.getName() : "";
+                String contact = ref.getContact() != null ? ref.getContact() : "";
+                String address = ref.getAddress() != null ? ref.getAddress() : "";
+                Calendar startDate = ref.getStartDate() != null ? ref.getStartDate() : null;
+                Calendar endDate = ref.getEndDate() != null ? ref.getEndDate() : null;
+
+                // Format the dates as strings
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String startDateStr = startDate != null ? dateFormat.format(startDate.getTime()) : "";
+                String endDateStr = endDate != null ? dateFormat.format(endDate.getTime()) : "";
+ String status = ref.getStatus() != null ? ref.getStatus() : "";
+  
+                Object records[] = {id, name, contact, address, startDateStr, endDateStr,status};
+                dtm.addRow(records);
+            }
+        }
+
+        // Commit transaction
+        tx.commit();
+    } catch (Exception e) {
+        if (tx != null) {
+            tx.rollback(); // Rollback in case of an error
+        }
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error retrieving data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } finally {
+        session.close(); // Always close the session
+    }
+        
+        
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+        dispose();
+        new Publichome().setVisible(true);
+    }//GEN-LAST:event_jLabel4MouseClicked
+
+    private void jLabel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseEntered
+
+    }//GEN-LAST:event_jLabel4MouseEntered
+
+    private void jLabel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseExited
+        //        jLabel3.setForeground(c);
+    }//GEN-LAST:event_jLabel4MouseExited
 
     /**
      * @param args the command line arguments
@@ -913,24 +576,12 @@ JOptionPane.showMessageDialog(this, "Updated");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
-    private javax.swing.JComboBox<String> jComboBox5;
     private org.jdatepicker.JDatePicker jDatePicker1;
     private org.jdatepicker.JDatePicker jDatePicker2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
@@ -938,38 +589,19 @@ JOptionPane.showMessageDialog(this, "Updated");
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel36;
-    private javax.swing.JLabel jLabel37;
-    private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable4;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField11;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     // End of variables declaration//GEN-END:variables
 byte[] photo=null;

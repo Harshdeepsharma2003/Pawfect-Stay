@@ -49,7 +49,6 @@ public class firstpage extends javax.swing.JFrame {
         jCheckBox2 = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         jTextField5 = new javax.swing.JTextField();
@@ -61,25 +60,25 @@ public class firstpage extends javax.swing.JFrame {
         jCheckBox1 = new javax.swing.JCheckBox();
         jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jLabel24 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.default.focusedBackground"));
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI Black", 1, 54)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Yu Gothic UI Light", 2, 54)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("DOG'S II HOME");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 30, 520, 70));
+        jLabel2.setText("Pawfect Stay");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 10, 520, 70));
 
-        jPanel3.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Blue"));
+        jPanel3.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Blue"));
+        jPanel3.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel19.setForeground(new java.awt.Color(255, 255, 255));
         jLabel19.setText("CONTACT");
         jPanel3.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, 100, -1));
 
@@ -91,7 +90,6 @@ public class firstpage extends javax.swing.JFrame {
         jPanel3.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, 160, -1));
 
         jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel20.setForeground(new java.awt.Color(255, 255, 255));
         jLabel20.setText("PASSWORD");
         jPanel3.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 120, -1));
 
@@ -116,7 +114,6 @@ public class firstpage extends javax.swing.JFrame {
         jPanel3.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 270, 90, -1));
 
         jLabel22.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel22.setForeground(new java.awt.Color(255, 255, 255));
         jLabel22.setText("Shelter Login");
         jPanel3.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 20, -1, -1));
 
@@ -141,7 +138,7 @@ public class firstpage extends javax.swing.JFrame {
         jPanel3.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 340, -1, 30));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 21)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 102));
+        jLabel9.setForeground(new java.awt.Color(51, 0, 255));
         jLabel9.setText("Register");
         jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -156,12 +153,7 @@ public class firstpage extends javax.swing.JFrame {
         });
         jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 340, -1, -1));
 
-        jLabel25.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
-        jLabel25.setForeground(java.awt.Color.red);
-        jLabel25.setText("Invalid Id/Password!");
-        jPanel3.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 400, -1, 30));
-
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 190, 420, 460));
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 100, 420, 410));
 
         jPanel4.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Blue"));
         jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -169,7 +161,6 @@ public class firstpage extends javax.swing.JFrame {
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel21.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel21.setForeground(new java.awt.Color(255, 255, 255));
         jLabel21.setText("CONTACT");
         jPanel4.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, 100, -1));
 
@@ -181,7 +172,6 @@ public class firstpage extends javax.swing.JFrame {
         jPanel4.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 80, 150, -1));
 
         jLabel23.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel23.setForeground(new java.awt.Color(255, 255, 255));
         jLabel23.setText("PASSWORD");
         jPanel4.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 120, -1));
 
@@ -206,7 +196,6 @@ public class firstpage extends javax.swing.JFrame {
         jPanel4.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 270, 90, -1));
 
         jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel26.setForeground(new java.awt.Color(255, 255, 255));
         jLabel26.setText("Public Login");
         jPanel4.add(jLabel26, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 20, -1, -1));
 
@@ -231,7 +220,7 @@ public class firstpage extends javax.swing.JFrame {
         jPanel4.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 340, -1, 30));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 21)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 102));
+        jLabel8.setForeground(new java.awt.Color(0, 255, 204));
         jLabel8.setText("Register");
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -246,15 +235,14 @@ public class firstpage extends javax.swing.JFrame {
         });
         jPanel4.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 340, -1, -1));
 
-        jLabel24.setFont(new java.awt.Font("Segoe UI Black", 1, 18)); // NOI18N
-        jLabel24.setForeground(java.awt.Color.red);
-        jLabel24.setText("Invalid Id/Password!");
-        jPanel4.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 410, -1, -1));
+        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, 410, 400));
 
-        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 190, 420, 460));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/welcome1.jpg"))); // NOI18N
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 640, 410));
 
-        jLabel1.setText("jLabel1");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/w4.jpg"))); // NOI18N
+        jLabel4.setText("jLabel4");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 530, 610, 400));
 
         pack();
         setLocationRelativeTo(null);
@@ -457,9 +445,8 @@ else {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;

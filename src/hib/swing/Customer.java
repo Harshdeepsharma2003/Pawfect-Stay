@@ -13,8 +13,7 @@ private String password;
     public Customer(){
     
 }
-    
-     public Customer(String name, String contact,String address,String password) {
+  public Customer(String name, String contact,String address,String password) {
         this.name = name;
         this.contact = contact;
           this.address = address;
